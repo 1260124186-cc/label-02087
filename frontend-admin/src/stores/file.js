@@ -39,6 +39,10 @@ export const useFileStore = defineStore('file', () => {
     }
   }
 
+  function reset() {
+    currentFile.value = null
+  }
+
   return {
     files,
     currentFile,
@@ -46,6 +50,7 @@ export const useFileStore = defineStore('file', () => {
     fetchFiles,
     fetchFile,
     uploadFile,
-    deleteFile
+    deleteFile,
+    reset
   }
 })
