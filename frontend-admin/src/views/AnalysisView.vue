@@ -95,7 +95,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, onUnmounted } from 'vue'
+import { ElMessage } from 'element-plus'
 import { Document, Back, PieChart, Warning, TrendCharts, List } from '@element-plus/icons-vue'
 import { useFileStore } from '@/stores/file'
 import { useAnalysisStore } from '@/stores/analysis'
@@ -113,9 +114,16 @@ const analysisStore = useAnalysisStore()
 const loading = ref(false)
 
 const fileId = ref(Number(props.id))
+let abortController = null
 
 onMounted(() => {
   loadData()
+})
+
+onUnmounted(() => {
+  if (abortController) {
+    abortController.abort()
+  }
 })
 
 watch(() => props.id, (newId) => {
@@ -123,15 +131,41 @@ watch(() => props.id, (newId) => {
   loadData()
 })
 
+function clearStoreData() {
+  fileStore.currentFile = null
+  analysisStore.reset()
+}
+
 async function loadData() {
+  if (abortController) {
+    abortController.abort()
+  }
+  abortController = new AbortController()
+  const currentRequestId = Number(props.id)
+  const signal = abortController.signal
+
   loading.value = true
+  clearStoreData()
+
   try {
     await Promise.all([
-      fileStore.fetchFile(fileId.value),
-      analysisStore.fetchAll(fileId.value)
+      fileStore.fetchFile(currentRequestId, { signal }),
+      analysisStore.fetchAll(currentRequestId, { signal })
     ])
+
+    if (Number(props.id) !== currentRequestId || signal.aborted) {
+      return
+    }
+  } catch (error) {
+    if (error.name !== 'CanceledError' && error.name !== 'AbortError') {
+      clearStoreData()
+      ElMessage.error('文件分析数据加载失败，请稍后重试')
+      console.error('Analysis data load failed:', error)
+    }
   } finally {
-    loading.value = false
+    if (Number(props.id) === currentRequestId && !signal.aborted) {
+      loading.value = false
+    }
   }
 }
 
