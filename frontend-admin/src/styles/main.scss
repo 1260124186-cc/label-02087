@@ -1,0 +1,610 @@
+// ============ 设计规范 ============
+// 主色调：蓝色系，避免紫色
+// 背景层级：深 -> 浅（header -> page -> card）
+// 间距基数：8px (8/16/24/32)
+// 圆角：8px
+// 字体层级：H1(24px) / H2(18px) / H3(16px) / Body(14px) / Small(12px)
+
+// ============ 颜色变量 ============
+$primary-color: #2563EB;        // 主色-蓝色
+$primary-hover: #1D4ED8;        // 主色悬停
+$primary-light: rgba(37, 99, 235, 0.1);
+
+$success-color: #10B981;
+$warning-color: #F59E0B;
+$danger-color: #EF4444;
+$info-color: #6B7280;
+
+// 背景色层级（从深到浅）
+$bg-header: #1E293B;            // 顶部导航-深色
+$bg-page: #F1F5F9;              // 页面背景-浅灰
+$bg-card: #FFFFFF;              // 卡片背景-白色
+$bg-hover: #F8FAFC;             // 悬停背景
+
+// 边框色
+$border-color: #E2E8F0;
+$border-light: #F1F5F9;
+
+// 文字色层级
+$text-primary: #1E293B;         // 主要文字
+$text-regular: #475569;         // 常规文字
+$text-secondary: #94A3B8;       // 次要文字
+$text-placeholder: #CBD5E1;     // 占位文字
+
+// 阴影
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+// 圆角
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 12px;
+
+// 过渡动画
+$transition-fast: 0.15s ease;
+$transition-normal: 0.25s ease;
+
+// ============ 字体层级 ============
+$font-h1: 24px;
+$font-h2: 18px;
+$font-h3: 16px;
+$font-body: 14px;
+$font-small: 12px;
+
+$line-height-tight: 1.25;
+$line-height-normal: 1.5;
+$line-height-relaxed: 1.75;
+
+// ============ 全局重置 ============
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  font-size: $font-body;
+  line-height: $line-height-normal;
+  color: $text-primary;
+  background-color: $bg-page;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+// ============ 顶部导航 ============
+.app-header {
+  height: 60px;
+  background: $bg-header;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  flex-shrink: 0;
+  box-shadow: $shadow-card;
+  position: relative;
+  z-index: 100;
+
+  .logo {
+    font-size: $font-h2;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #FFFFFF;
+    text-decoration: none;
+    transition: opacity $transition-fast;
+
+    &:hover {
+      opacity: 0.9;
+    }
+
+    .el-icon {
+      font-size: 26px;
+      color: $primary-color;
+    }
+  }
+}
+
+// ============ 主内容区 ============
+.app-main {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  background: $bg-page;
+
+  // 内容居中限宽
+  > * {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+// ============ 卡片组件 ============
+.card {
+  background: $bg-card;
+  border-radius: $radius-md;
+  box-shadow: $shadow-card;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  border: 1px solid $border-light;
+  transition: box-shadow $transition-normal;
+
+  &:hover {
+    box-shadow: $shadow-lg;
+  }
+
+  &-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid $border-color;
+
+    .title {
+      font-size: $font-h3;
+      font-weight: 600;
+      color: $text-primary;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      line-height: $line-height-tight;
+
+      .el-icon {
+        color: $primary-color;
+        font-size: 18px;
+      }
+    }
+  }
+}
+
+// ============ 表格样式 ============
+.el-table {
+  --el-table-border-color: #{$border-color};
+  --el-table-header-bg-color: #{$bg-page};
+  --el-table-row-hover-bg-color: #{$bg-hover};
+  font-size: $font-body;
+
+  .el-table__header th {
+    font-weight: 600;
+    color: $text-primary;
+    background: $bg-page !important;
+  }
+
+  .el-table__row {
+    transition: background-color $transition-fast;
+    cursor: pointer;
+  }
+}
+
+// ============ 上传区域 ============
+.upload-area {
+  border: 2px dashed $border-color;
+  border-radius: $radius-md;
+  padding: 48px 24px;
+  text-align: center;
+  transition: all $transition-normal;
+  cursor: pointer;
+  background: $bg-hover;
+
+  &:hover {
+    border-color: $primary-color;
+    background: $primary-light;
+
+    .el-icon {
+      color: $primary-color;
+      transform: scale(1.1);
+    }
+  }
+
+  .el-icon {
+    font-size: 56px;
+    color: $text-secondary;
+    margin-bottom: 16px;
+    transition: all $transition-normal;
+  }
+
+  .upload-text {
+    color: $text-regular;
+    font-size: $font-body;
+    line-height: $line-height-relaxed;
+
+    em {
+      color: $primary-color;
+      font-style: normal;
+      font-weight: 500;
+    }
+  }
+
+  .upload-tip {
+    color: $text-secondary;
+    font-size: $font-small;
+    margin-top: 8px;
+  }
+}
+
+// ============ 诊断卡片 ============
+.diagnosis-item {
+  padding: 14px 16px;
+  border-radius: $radius-sm;
+  margin-bottom: 12px;
+  display: flex;
+  gap: 12px;
+  transition: transform $transition-fast;
+
+  &:hover {
+    transform: translateX(4px);
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &.info {
+    background: rgba($primary-color, 0.08);
+    border-left: 4px solid $primary-color;
+
+    .diagnosis-icon { color: $primary-color; }
+  }
+
+  &.warning {
+    background: rgba($warning-color, 0.08);
+    border-left: 4px solid $warning-color;
+
+    .diagnosis-icon { color: $warning-color; }
+  }
+
+  &.error {
+    background: rgba($danger-color, 0.08);
+    border-left: 4px solid $danger-color;
+
+    .diagnosis-icon { color: $danger-color; }
+  }
+
+  .diagnosis-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .diagnosis-content {
+    flex: 1;
+    min-width: 0;
+
+    .diagnosis-title {
+      font-weight: 600;
+      font-size: $font-body;
+      color: $text-primary;
+      margin-bottom: 4px;
+    }
+
+    .diagnosis-desc {
+      color: $text-regular;
+      font-size: $font-small;
+      line-height: $line-height-normal;
+      margin-bottom: 6px;
+    }
+
+    .diagnosis-suggestion {
+      color: $text-secondary;
+      font-size: $font-small;
+      line-height: $line-height-normal;
+    }
+  }
+}
+
+// ============ 协议标签 ============
+.protocol-tag {
+  font-weight: 500;
+
+  &.TCP {
+    --el-tag-bg-color: rgba(37, 99, 235, 0.1);
+    --el-tag-text-color: #2563EB;
+    --el-tag-border-color: rgba(37, 99, 235, 0.2);
+  }
+  &.UDP {
+    --el-tag-bg-color: rgba(16, 185, 129, 0.1);
+    --el-tag-text-color: #10B981;
+    --el-tag-border-color: rgba(16, 185, 129, 0.2);
+  }
+  &.HTTP {
+    --el-tag-bg-color: rgba(245, 158, 11, 0.1);
+    --el-tag-text-color: #F59E0B;
+    --el-tag-border-color: rgba(245, 158, 11, 0.2);
+  }
+  &.HTTPS {
+    --el-tag-bg-color: rgba(16, 185, 129, 0.1);
+    --el-tag-text-color: #059669;
+    --el-tag-border-color: rgba(16, 185, 129, 0.2);
+  }
+  &.DNS {
+    --el-tag-bg-color: rgba(107, 114, 128, 0.1);
+    --el-tag-text-color: #6B7280;
+    --el-tag-border-color: rgba(107, 114, 128, 0.2);
+  }
+  &.ICMP {
+    --el-tag-bg-color: rgba(239, 68, 68, 0.1);
+    --el-tag-text-color: #EF4444;
+    --el-tag-border-color: rgba(239, 68, 68, 0.2);
+  }
+  &.ARP {
+    --el-tag-bg-color: rgba(107, 114, 128, 0.1);
+    --el-tag-text-color: #475569;
+    --el-tag-border-color: rgba(107, 114, 128, 0.2);
+  }
+}
+
+// ============ 统计卡片 ============
+.stat-card {
+  text-align: center;
+  padding: 20px 16px;
+  background: $bg-hover;
+  border-radius: $radius-md;
+  transition: all $transition-normal;
+
+  &:hover {
+    background: $primary-light;
+    transform: translateY(-2px);
+
+    .stat-value {
+      color: $primary-hover;
+    }
+  }
+
+  .stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: $primary-color;
+    margin-bottom: 8px;
+    line-height: $line-height-tight;
+    transition: color $transition-fast;
+  }
+
+  .stat-label {
+    color: $text-secondary;
+    font-size: $font-small;
+    font-weight: 500;
+  }
+}
+
+// ============ 空状态 ============
+.empty-state {
+  text-align: center;
+  padding: 60px 24px;
+  color: $text-secondary;
+
+  .el-icon {
+    font-size: 64px;
+    color: $border-color;
+    margin-bottom: 16px;
+  }
+
+  p {
+    font-size: $font-body;
+    line-height: $line-height-normal;
+  }
+}
+
+// ============ 层级详情面板 ============
+.layer-panel {
+  .el-collapse {
+    border: none;
+  }
+
+  .el-collapse-item {
+    margin-bottom: 8px;
+    border: 1px solid $border-color;
+    border-radius: $radius-sm;
+    overflow: hidden;
+
+    &__header {
+      background: $bg-page;
+      font-weight: 600;
+      color: $text-primary;
+      padding: 12px 16px;
+      height: auto;
+      line-height: $line-height-normal;
+      border-bottom: none;
+      transition: background-color $transition-fast;
+
+      &:hover {
+        background: $bg-hover;
+      }
+    }
+
+    &__wrap {
+      border-top: 1px solid $border-color;
+    }
+
+    &__content {
+      padding: 0;
+    }
+  }
+
+  .layer-content {
+    padding: 12px 16px;
+
+    .field-row {
+      display: flex;
+      padding: 6px 0;
+      border-bottom: 1px dashed $border-light;
+      font-size: $font-small;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .field-name {
+        width: 120px;
+        color: $text-secondary;
+        flex-shrink: 0;
+        font-weight: 500;
+      }
+
+      .field-value {
+        color: $text-primary;
+        word-break: break-all;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      }
+    }
+  }
+}
+
+// ============ Hex 视图 ============
+.hex-view {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: $font-small;
+  background: #1E293B;
+  color: #E2E8F0;
+  padding: 16px;
+  border-radius: $radius-md;
+  overflow-x: auto;
+  line-height: 1.8;
+
+  .hex-line {
+    display: flex;
+
+    .hex-offset {
+      color: #10B981;
+      width: 80px;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .hex-bytes {
+      flex: 1;
+      color: #60A5FA;
+
+      span {
+        margin-right: 8px;
+
+        &:nth-child(8n) {
+          margin-right: 16px;
+        }
+      }
+    }
+
+    .hex-ascii {
+      color: #FBBF24;
+      width: 180px;
+      flex-shrink: 0;
+      padding-left: 16px;
+      border-left: 1px solid #334155;
+    }
+  }
+}
+
+// ============ 按钮增强 ============
+.el-button {
+  transition: all $transition-fast;
+  font-weight: 500;
+
+  &:not(.is-disabled):hover {
+    transform: translateY(-1px);
+  }
+
+  &:not(.is-disabled):active {
+    transform: translateY(0);
+  }
+}
+
+// ============ 输入框增强 ============
+.el-input__wrapper {
+  transition: box-shadow $transition-fast;
+}
+
+// ============ 分页增强 ============
+.el-pagination {
+  --el-pagination-button-bg-color: #{$bg-card};
+  --el-pagination-hover-color: #{$primary-color};
+
+  .el-pager li {
+    transition: all $transition-fast;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+}
+
+// ============ 抽屉增强 ============
+.el-drawer {
+  &__header {
+    border-bottom: 1px solid $border-color;
+    margin-bottom: 0;
+    padding: 16px 20px;
+  }
+
+  &__body {
+    padding: 20px;
+  }
+}
+
+// ============ 消息提示增强 ============
+.el-message {
+  border-radius: $radius-md;
+  box-shadow: $shadow-lg;
+}
+
+// ============ 进度条增强 ============
+.el-progress {
+  .el-progress-bar__outer {
+    border-radius: $radius-lg;
+  }
+
+  .el-progress-bar__inner {
+    border-radius: $radius-lg;
+    transition: width 0.3s ease;
+  }
+}
+
+// ============ 标签增强 ============
+.el-tag {
+  border-radius: $radius-sm;
+  font-size: $font-small;
+  transition: all $transition-fast;
+
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+// ============ 描述列表增强 ============
+.el-descriptions {
+  &__label {
+    font-weight: 500;
+    color: $text-secondary;
+  }
+
+  &__content {
+    color: $text-primary;
+  }
+}
+
+// ============ 过滤表单 ============
+.filter-form {
+  background: $bg-hover;
+  padding: 16px;
+  border-radius: $radius-md;
+  margin-bottom: 16px;
+
+  .el-form-item {
+    margin-bottom: 0;
+    margin-right: 16px;
+
+    &__label {
+      color: $text-regular;
+      font-weight: 500;
+    }
+  }
+}
