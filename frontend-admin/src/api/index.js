@@ -35,31 +35,31 @@ export const fileApi = {
     })
   },
 
-  getList: () => api.get('/files'),
+  getList: (options = {}) => api.get('/files', options),
 
-  getDetail: (id) => api.get(`/files/${id}`),
+  getDetail: (id, options = {}) => api.get(`/files/${id}`, options),
 
   delete: (id) => api.delete(`/files/${id}`)
 }
 
 // 报文相关 API
 export const packetApi = {
-  getList: (fileId, params = {}) => api.get(`/packets/${fileId}`, { params }),
+  getList: (fileId, params = {}, options = {}) => api.get(`/packets/${fileId}`, { params, ...options }),
 
-  getDetail: (fileId, packetNo) => api.get(`/packets/${fileId}/${packetNo}`)
+  getDetail: (fileId, packetNo, options = {}) => api.get(`/packets/${fileId}/${packetNo}`, options)
 }
 
 // 分析相关 API
 export const analysisApi = {
-  getProtocolStats: (fileId) => api.get(`/analysis/${fileId}/protocol-stats`),
+  getProtocolStats: (fileId, options = {}) => api.get(`/analysis/${fileId}/protocol-stats`, options),
 
-  getTrafficTimeline: (fileId, interval = 1) =>
-    api.get(`/analysis/${fileId}/traffic-timeline`, { params: { interval } }),
+  getTrafficTimeline: (fileId, interval = 1, options = {}) =>
+    api.get(`/analysis/${fileId}/traffic-timeline`, { params: { interval }, ...options }),
 
-  getTopTalkers: (fileId, limit = 10) =>
-    api.get(`/analysis/${fileId}/top-talkers`, { params: { limit } }),
+  getTopTalkers: (fileId, limit = 10, options = {}) =>
+    api.get(`/analysis/${fileId}/top-talkers`, { params: { limit }, ...options }),
 
-  getDiagnosis: (fileId) => api.get(`/analysis/${fileId}/diagnosis`)
+  getDiagnosis: (fileId, options = {}) => api.get(`/analysis/${fileId}/diagnosis`, options)
 }
 
 export default api

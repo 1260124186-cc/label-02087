@@ -16,10 +16,13 @@ export const useFileStore = defineStore('file', () => {
     }
   }
 
-  async function fetchFile(id) {
+  async function fetchFile(id, options = {}) {
     loading.value = true
     try {
-      currentFile.value = await fileApi.getDetail(id)
+      currentFile.value = await fileApi.getDetail(id, options)
+    } catch (error) {
+      currentFile.value = null
+      throw error
     } finally {
       loading.value = false
     }
