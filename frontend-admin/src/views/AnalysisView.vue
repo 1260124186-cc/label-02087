@@ -111,6 +111,7 @@ const props = defineProps({
 const fileStore = useFileStore()
 const analysisStore = useAnalysisStore()
 const loading = ref(false)
+const currentRequestId = ref(null)
 
 const fileId = ref(Number(props.id))
 
@@ -124,14 +125,27 @@ watch(() => props.id, (newId) => {
 })
 
 async function loadData() {
+  const requestId = Date.now()
+  currentRequestId.value = requestId
+  
   loading.value = true
+  
+  fileStore.reset()
+  analysisStore.reset()
+  
   try {
     await Promise.all([
       fileStore.fetchFile(fileId.value),
       analysisStore.fetchAll(fileId.value)
     ])
+    
+    if (currentRequestId.value !== requestId) {
+      return
+    }
   } finally {
-    loading.value = false
+    if (currentRequestId.value === requestId) {
+      loading.value = false
+    }
   }
 }
 
