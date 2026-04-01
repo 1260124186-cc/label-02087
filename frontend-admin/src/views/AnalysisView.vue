@@ -95,8 +95,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, onUnmounted } from 'vue'
 import { Document, Back, PieChart, Warning, TrendCharts, List } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 import { useFileStore } from '@/stores/file'
 import { useAnalysisStore } from '@/stores/analysis'
 import ProtocolChart from '@/components/ProtocolChart.vue'
@@ -113,9 +114,17 @@ const analysisStore = useAnalysisStore()
 const loading = ref(false)
 
 const fileId = ref(Number(props.id))
+let abortController = null
+let requestVersion = 0
 
 onMounted(() => {
   loadData()
+})
+
+onUnmounted(() => {
+  if (abortController) {
+    abortController.abort()
+  }
 })
 
 watch(() => props.id, (newId) => {
@@ -124,14 +133,43 @@ watch(() => props.id, (newId) => {
 })
 
 async function loadData() {
+  if (abortController) {
+    abortController.abort()
+  }
+  abortController = new AbortController()
+  requestVersion++
+  const currentVersion = requestVersion
+  const targetFileId = fileId.value
+
   loading.value = true
+  fileStore.currentFile = null
+  analysisStore.reset()
+
   try {
-    await Promise.all([
-      fileStore.fetchFile(fileId.value),
-      analysisStore.fetchAll(fileId.value)
+    const [fileResult] = await Promise.all([
+      fileStore.fetchFile(targetFileId),
+      analysisStore.fetchAll(targetFileId)
     ])
+
+    if (currentVersion !== requestVersion) {
+      return
+    }
+
+    if (!fileResult) {
+      throw new Error('文件数据加载失败')
+    }
+  } catch (error) {
+    if (error.name !== 'AbortError') {
+      if (currentVersion === requestVersion) {
+        fileStore.currentFile = null
+        analysisStore.reset()
+        ElMessage.error('数据加载失败，请重试')
+      }
+    }
   } finally {
-    loading.value = false
+    if (currentVersion === requestVersion) {
+      loading.value = false
+    }
   }
 }
 
