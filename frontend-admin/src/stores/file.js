@@ -6,6 +6,7 @@ export const useFileStore = defineStore('file', () => {
   const files = ref([])
   const currentFile = ref(null)
   const loading = ref(false)
+  let fetchFileVersion = 0
 
   async function fetchFiles() {
     loading.value = true
@@ -17,11 +18,22 @@ export const useFileStore = defineStore('file', () => {
   }
 
   async function fetchFile(id) {
+    fetchFileVersion++
+    const currentVersion = fetchFileVersion
     loading.value = true
+    currentFile.value = null
+
     try {
-      currentFile.value = await fileApi.getDetail(id)
+      const result = await fileApi.getDetail(id)
+      if (currentVersion === fetchFileVersion) {
+        currentFile.value = result
+        return result
+      }
+      return null
     } finally {
-      loading.value = false
+      if (currentVersion === fetchFileVersion) {
+        loading.value = false
+      }
     }
   }
 

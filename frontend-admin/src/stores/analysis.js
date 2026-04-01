@@ -8,9 +8,14 @@ export const useAnalysisStore = defineStore('analysis', () => {
   const topTalkers = ref([])
   const diagnosis = ref([])
   const loading = ref(false)
+  let fetchAllVersion = 0
 
   async function fetchAll(fileId) {
+    fetchAllVersion++
+    const currentVersion = fetchAllVersion
     loading.value = true
+    reset()
+
     try {
       const [stats, timeline, talkers, diag] = await Promise.all([
         analysisApi.getProtocolStats(fileId),
@@ -18,12 +23,22 @@ export const useAnalysisStore = defineStore('analysis', () => {
         analysisApi.getTopTalkers(fileId),
         analysisApi.getDiagnosis(fileId)
       ])
-      protocolStats.value = stats
-      trafficTimeline.value = timeline
-      topTalkers.value = talkers
-      diagnosis.value = diag
+
+      if (currentVersion === fetchAllVersion) {
+        protocolStats.value = stats
+        trafficTimeline.value = timeline
+        topTalkers.value = talkers
+        diagnosis.value = diag
+      }
+    } catch (error) {
+      if (currentVersion === fetchAllVersion) {
+        reset()
+      }
+      throw error
     } finally {
-      loading.value = false
+      if (currentVersion === fetchAllVersion) {
+        loading.value = false
+      }
     }
   }
 
